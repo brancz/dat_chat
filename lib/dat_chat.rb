@@ -33,8 +33,7 @@ module DatChat
     get "/" do
       env['warden'].authenticate!
       @messages = Message.history(DatChat::ChatBackend::CHANNEL)
-      @email = env['warden'].user.email
-      erb :"chat.html", layout: :layout
+      erb :"chat.html"
     end
 
     get "/assets/js/application.js" do
@@ -44,7 +43,7 @@ module DatChat
     end
 
     get "/auth/login" do
-      erb :"login.html", layout: :layout
+      erb :"login.html"
     end
 
     post '/auth/login' do
