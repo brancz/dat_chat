@@ -1,4 +1,5 @@
 #\ -s puma
+require './config/environment'
 require './app'
 require './middlewares/chat_backend'
 

@@ -21,6 +21,11 @@
         <h1>Chat</h1>
       </div>
       <div id="chat-text">
+        <% unless @messages.empty? %>
+          <% @messages.reverse.each do |message| %>
+            <div class='panel panel-default'><div class='panel-heading'><%= message.handle %></div><div class='panel-body'><%= message.text %></div></div>
+          <% end %>
+        <% end %>
       </div>
     </div>
 

@@ -1,7 +1,7 @@
 redis:
   image: redis
   ports:
-    - "6379"
+    - "6379:6379"
 web0:
   build: .
   command: bundle exec puma -b tcp://0.0.0.0:5000
@@ -11,4 +11,6 @@ web0:
     - "5000:5000"
   links:
     - redis
+  environment:
+    REDIS_URL: redis://redis:6379
 

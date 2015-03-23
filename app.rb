@@ -1,4 +1,5 @@
 require 'sinatra/base'
+require './models/user'
 
 module ChatDemo
   class App < Sinatra::Base
@@ -11,7 +12,7 @@ module ChatDemo
 
       def authorized?
         @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-        @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == ['admin', 'admin']
+        @auth.provided? and @auth.basic? and @auth.credentials and User.authenticate!(*@auth.credentials)
       end
     end
 
@@ -19,8 +20,21 @@ module ChatDemo
       erb :"register_login.html"
     end
 
+    post "/" do
+      puts params
+      user = User.new(email: params[:email], password: params[:password])
+      if user.valid?
+        @messages = ['Successfully singed up, you can now login']
+        user.save
+      else
+        @errors = user.errors.full_messages
+      end
+      erb :"register_login.html"
+    end
+
     get "/chat" do
       protected!
+      @messages = Message.history(ChatDemo::ChatBackend::CHANNEL)
       erb :"chat.html"
     end
 

@@ -3,6 +3,7 @@ require 'thread'
 require 'redis'
 require 'json'
 require 'erb'
+require_relative '../models/message'
 
 module ChatDemo
   class ChatBackend
@@ -12,10 +13,9 @@ module ChatDemo
     def initialize(app)
       @app     = app
       @clients = []
-      uri = URI.parse('redis://redis:6379')
-      @redis = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+      @redis = Redis.new(url: ENV['REDIS_URL'])
       Thread.new do
-        redis_sub = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+        redis_sub = Redis.new(url: ENV['REDIS_URL'])
         redis_sub.subscribe(CHANNEL) do |on|
           on.message do |channel, msg|
             @clients.each {|ws| ws.send(msg) }
@@ -26,7 +26,8 @@ module ChatDemo
 
     def call(env)
       if Faye::WebSocket.websocket?(env)
-        ws = Faye::WebSocket.new(env, nil, {ping: KEEPALIVE_TIME })
+        ws = Faye::WebSocket.new(env, nil, { ping: KEEPALIVE_TIME })
+
         ws.on :open do |event|
           p [:open, ws.object_id]
           @clients << ws
@@ -34,7 +35,9 @@ module ChatDemo
 
         ws.on :message do |event|
           p [:message, event.data]
-          @redis.publish(CHANNEL, sanitize(event.data))
+          sanitized = sanitize(event.data)
+          @redis.lpush(CHANNEL, sanitized)
+          @redis.publish(CHANNEL, sanitized)
         end
 
         ws.on :close do |event|
@@ -45,13 +48,13 @@ module ChatDemo
 
         # Return async Rack response
         ws.rack_response
-
       else
         @app.call(env)
       end
     end
 
     private
+
     def sanitize(message)
       json = JSON.parse(message)
       json.each {|key, value| json[key] = ERB::Util.html_escape(value) }
