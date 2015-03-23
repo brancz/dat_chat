@@ -4,6 +4,7 @@ class Message
   include ActiveModel::Model
 
   attr_accessor :handle, :text
+  validates_presence_of :text, :handle
 
   def self.history(channel)
     Redis.current.lrange(channel, 0, -1).map do |entry|

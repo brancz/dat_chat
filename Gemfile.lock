@@ -27,6 +27,8 @@ GEM
     puma (2.6.0-java)
       rack (>= 1.1, < 2.0)
     rack (1.5.2)
+    rack-flash3 (1.0.5)
+      rack
     rack-protection (1.5.0)
       rack
     redis (3.0.4)
@@ -39,6 +41,8 @@ GEM
     tilt (1.4.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    warden (1.2.3)
+      rack (>= 1.0)
     websocket-driver (0.3.4)
     websocket-driver (0.3.4-java)
 
@@ -51,5 +55,7 @@ DEPENDENCIES
   bcrypt
   faye-websocket
   puma
+  rack-flash3
   redis
   sinatra
+  warden

@@ -17,7 +17,7 @@ class User
 
   def save
     fail HasErrors unless self.valid?
-    Redis.current.set(self.email, self.password_hash)
+    Redis.current.set(@email, @password)
   end
 
   def self.create(attributes)
@@ -30,12 +30,6 @@ class User
     password_hash = Redis.current.get(email)
     return nil if password_hash.nil?
     User.new(email: email, password_hash: password_hash)
-  end
-
-  def self.authenticate!(email, password)
-    user = find(email)
-    false if user.nil?
-    user.password == password
   end
 end
 

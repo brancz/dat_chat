@@ -29,19 +29,24 @@ module DatChat
         ws = Faye::WebSocket.new(env, nil, { ping: KEEPALIVE_TIME })
 
         ws.on :open do |event|
-          p [:open, ws.object_id]
-          @clients << ws
+          if env['warden'].authenticated?
+            @clients << ws
+          end
         end
 
         ws.on :message do |event|
-          p [:message, event.data]
-          sanitized = sanitize(event.data)
-          @redis.lpush(CHANNEL, sanitized)
-          @redis.publish(CHANNEL, sanitized)
+          sanitized_json = sanitize(event.data)
+          message_json = JSON.parse(sanitized_json, symbolize_names: true)
+          message = Message.new(message_json)
+          message.handle = env['warden'].user.email
+          if message.valid?
+            message_json = message.to_json
+            @redis.lpush(CHANNEL, message_json)
+            @redis.publish(CHANNEL, message_json)
+          end
         end
 
         ws.on :close do |event|
-          p [:close, ws.object_id, event.code, event.reason]
           @clients.delete(ws)
           ws = nil
         end
