@@ -1,0 +1,8 @@
+{
+  "name": "Dat Chat",
+  "description": "Distributed Websockets Chat using Ruby and Redis",
+  "success_url": "/",
+  "addons": ["rediscloud"],
+  "env": {},
+  "scripts": {}
+}

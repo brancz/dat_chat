@@ -1,0 +1,14 @@
+redis:
+  image: redis
+  ports:
+    - "6379"
+web0:
+  build: .
+  command: bundle exec puma -b tcp://0.0.0.0:5000
+  volumes:
+    - .:/usr/src/app
+  ports:
+    - "5000:5000"
+  links:
+    - redis
+
