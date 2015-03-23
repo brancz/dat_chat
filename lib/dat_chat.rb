@@ -1,26 +1,9 @@
 require 'sinatra/base'
-require 'dat_chat/models/user'
-require 'dat_chat/middlewares/chat_backend'
-require 'warden'
 require 'rack-flash'
 
-Warden::Strategies.add(:password) do
-  def valid?
-    params['user'] && params['user']['email'] && params['user']['password']
-  end
-
-  def authenticate!
-    user = User.find(params['user']['email'])
-
-    if user.nil?
-      throw(:warden, message: "The email you entered does not exist.")
-    elsif user.password == params['user']['password']
-      success!(user)
-    else
-      throw(:warden, message: "The email and password combination ")
-    end
-  end
-end
+require 'dat_chat/models/user'
+require 'dat_chat/middlewares/chat_backend'
+require 'dat_chat/warden_stategies/password'
 
 module DatChat
   class App < Sinatra::Base
@@ -51,17 +34,17 @@ module DatChat
       env['warden'].authenticate!
       @messages = Message.history(DatChat::ChatBackend::CHANNEL)
       @email = env['warden'].user.email
-      erb :"chat.html"
+      erb :"chat.html", layout: :layout
     end
 
     get "/assets/js/application.js" do
       content_type :js
       @scheme = ENV['RACK_ENV'] == "production" ? "wss://" : "ws://"
-      erb :"application.js"
+      erb :"application.js", layout: false
     end
 
     get "/auth/login" do
-      erb :"login.html"
+      erb :"login.html", layout: :layout
     end
 
     post '/auth/login' do
