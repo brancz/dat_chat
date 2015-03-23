@@ -1,7 +1,8 @@
 #\ -s puma
 require './config/environment'
-require './app'
-require './middlewares/chat_backend'
 
-use ChatDemo::ChatBackend
-run ChatDemo::App
+require 'dat_chat'
+require 'dat_chat/middlewares/chat_backend'
+
+use DatChat::ChatBackend
+run DatChat::App

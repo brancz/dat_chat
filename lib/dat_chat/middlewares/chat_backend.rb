@@ -3,9 +3,9 @@ require 'thread'
 require 'redis'
 require 'json'
 require 'erb'
-require_relative '../models/message'
+require 'dat_chat/models/message'
 
-module ChatDemo
+module DatChat
   class ChatBackend
     KEEPALIVE_TIME = 15 # in seconds
     CHANNEL        = "chat-demo"

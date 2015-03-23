@@ -1,8 +1,11 @@
 require 'sinatra/base'
-require './models/user'
+require 'dat_chat/models/user'
 
-module ChatDemo
+module DatChat
   class App < Sinatra::Base
+    set :public_folder, settings.root + '/dat_chat/public'
+    set :views, settings.root + '/dat_chat/views'
+
     helpers do
       def protected!
         return if authorized?
@@ -34,7 +37,7 @@ module ChatDemo
 
     get "/chat" do
       protected!
-      @messages = Message.history(ChatDemo::ChatBackend::CHANNEL)
+      @messages = Message.history(DatChat::ChatBackend::CHANNEL)
       erb :"chat.html"
     end
 
@@ -45,3 +48,4 @@ module ChatDemo
     end
   end
 end
+
