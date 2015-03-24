@@ -9,6 +9,12 @@ ws.onmessage = function(message) {
   }, 800);
 };
 
+$(function() {
+  $("body").stop().animate({
+    scrollTop: $('body')[0].scrollHeight
+  }, 800);
+});
+
 $("#message-form").on("submit", function(event) {
   event.preventDefault();
   var text   = $("#input-text")[0].value;

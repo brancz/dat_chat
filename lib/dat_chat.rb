@@ -10,6 +10,7 @@ module DatChat
     set :public_folder, settings.root + '/dat_chat/public'
     set :views,         settings.root + '/dat_chat/views'
     enable :sessions
+    enable :method_override
 
     use Rack::Flash
 
@@ -42,14 +43,12 @@ module DatChat
       erb :"application.js", layout: false
     end
 
-    get "/auth/login" do
-      erb :"login.html"
+    get "/auth/sign_in" do
+      erb :"sign_in.html"
     end
 
-    post '/auth/login' do
+    post '/auth/sign_in' do
       env['warden'].authenticate!
-
-      flash[:success] = env['warden'].message
 
       if session[:return_to].nil?
         redirect '/'
@@ -58,22 +57,33 @@ module DatChat
       end
     end
 
+    get "/auth/sign_up" do
+      erb :"sign_up.html"
+    end
+
     post "/auth/sign_up" do
       user = User.new(email: params[:user][:email], password: params[:user][:password])
       if user.valid?
-        flash[:success] = 'Successfully singed up, you can now login'
+        flash[:success] = 'Successfully singed up, you can now sign in'
         user.save
+        redirect '/auth/sign_in'
       else
         flash[:error] = user.errors.full_messages
+        erb :"sign_up.html"
       end
-      erb :"login.html"
+    end
+
+    delete '/auth/sign_out' do
+      env['warden'].logout
+      flash[:success] = 'Successfully signed out'
+      redirect '/auth/sign_in'
     end
 
     post '/auth/unauthenticated' do
       session[:return_to] = env['warden.options'][:attempted_path] if session[:return_to].nil?
 
       flash[:error] = env['warden.options'][:message] || "You must log in"
-      redirect '/auth/login'
+      redirect '/auth/sign_in'
     end
   end
 end
