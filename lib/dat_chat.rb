@@ -7,8 +7,9 @@ require 'dat_chat/warden_stategies/password'
 
 module DatChat
   class App < Sinatra::Base
-    set :public_folder, settings.root + '/dat_chat/public'
-    set :views,         settings.root + '/dat_chat/views'
+    set :public_folder,  settings.root + '/dat_chat/public'
+    set :views,          settings.root + '/dat_chat/views'
+    set :session_secret, ENV['SESSION_SECRET']
     enable :sessions
     enable :method_override
 

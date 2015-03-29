@@ -8,9 +8,41 @@ web0:
   volumes:
     - .:/usr/src/app
   ports:
-    - "5000:5000"
+    - "5000"
   links:
     - redis
   environment:
     REDIS_URL: redis://redis:6379
-
+    SESSION_SECRET: supersavesecret
+web1:
+  build: .
+  command: bundle exec puma -b tcp://0.0.0.0:5000
+  volumes:
+    - .:/usr/src/app
+  ports:
+    - "5000"
+  links:
+    - redis
+  environment:
+    REDIS_URL: redis://redis:6379
+    SESSION_SECRET: supersavesecret
+web2:
+  build: .
+  command: bundle exec puma -b tcp://0.0.0.0:5000
+  volumes:
+    - .:/usr/src/app
+  ports:
+    - "5000"
+  links:
+    - redis
+  environment:
+    REDIS_URL: redis://redis:6379
+    SESSION_SECRET: supersavesecret
+haproxy:
+  build: ./haproxy
+  ports:
+    - "8081"
+  links:
+    - web0
+    - web1
+    - web2
