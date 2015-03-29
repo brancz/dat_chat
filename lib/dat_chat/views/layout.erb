@@ -2,11 +2,17 @@
 <html>
   <head>
     <title>DatChat</title>
+    <link href='//fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/css/application.css" rel="stylesheet" media="screen">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
+
+    <div style="position: fixed; top: 0; left: 0; z-index: 2; padding: 10px; background-color: white; font-family: 'Droid Sans Mono';">
+      <% require 'socket'; %>
+      <%= Socket.ip_address_list.map(&:ip_address).join(', ') %>
+    </div>
 
     <% if flash[:error] %>
       <div class="alert alert-warning" role="alert"><%= flash[:error] %></div>
