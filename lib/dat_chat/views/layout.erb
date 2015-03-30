@@ -11,7 +11,7 @@
 
     <div style="position: fixed; top: 0; left: 0; z-index: 2; padding: 10px; background-color: white; font-family: 'Droid Sans Mono';">
       <% require 'socket'; %>
-      <%= Socket.ip_address_list.map(&:ip_address).join(', ') %>
+      <%= ENV['NAME'] %>, <%= Socket.ip_address_list.delete_if(&:ipv4_loopback?).delete_if(&:ipv6_loopback?).map(&:ip_address).join(', ') %>
     </div>
 
     <% if flash[:error] %>
