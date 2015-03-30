@@ -52,7 +52,7 @@ add more instances of the webserver. To load balance access to those webservers
 we are using HAProxy. Here's a picture of what that architecture would look
 like.
 
-
+![current architecture](https://raw.githubusercontent.com/flower-pot/dat_chat/master/docs/current-architecture.png)
 
 > Info: when you look at my current HAProxy configuration you will notice that
 > it is very simple. It is just meant for locally trying out the application.
@@ -62,6 +62,7 @@ To allow clustering of the HAProxy we would need something like an [Elastic IP
 Address](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html).
 Then we could use [keepalived](http://www.keepalived.org/) to notice when a
 HAProxy is not available and route the client to a working instance. Then the
-architecture's picture would look like this.
+architecture's picture would look like this, as described
+[here](https://blog.logentries.com/2014/12/keepalived-and-haproxy-in-aws-an-exploratory-guide/).
 
-
+![desired architecture](https://raw.githubusercontent.com/flower-pot/dat_chat/master/docs/desired-architecture.png)
