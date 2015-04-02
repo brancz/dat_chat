@@ -1,5 +1,7 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'redis'
-Redis.current = Redis.new(url: ENV['REDIS_URL'])
+require 'dat_chat/redis_factory'
+
+Redis.current = RedisFactory.redis_client
 

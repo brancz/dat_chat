@@ -4,6 +4,7 @@ require 'redis'
 require 'json'
 require 'erb'
 require 'dat_chat/models/message'
+require 'dat_chat/redis_factory'
 
 module DatChat
   class ChatBackend
@@ -13,9 +14,9 @@ module DatChat
     def initialize(app)
       @app     = app
       @clients = []
-      @redis = Redis.new(url: ENV['REDIS_URL'])
+      @redis = RedisFactory.redis_client
       Thread.new do
-        redis_sub = Redis.new(url: ENV['REDIS_URL'])
+        redis_sub = RedisFactory.redis_client
         redis_sub.subscribe(CHANNEL) do |on|
           on.message do |channel, msg|
             @clients.each {|ws| ws.send(msg) }
