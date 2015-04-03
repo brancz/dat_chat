@@ -16,10 +16,16 @@ module DatChat
       @clients = []
       @redis = RedisFactory.redis_client
       Thread.new do
-        redis_sub = RedisFactory.redis_client
-        redis_sub.subscribe(CHANNEL) do |on|
-          on.message do |channel, msg|
-            @clients.each {|ws| ws.send(msg) }
+        loop do
+          begin
+            redis_sub = RedisFactory.redis_client
+            redis_sub.subscribe(CHANNEL) do |on|
+              on.message do |channel, msg|
+                @clients.each {|ws| ws.send(msg) }
+              end
+            end
+          rescue => e
+            puts 'reconnecting to new redis master'
           end
         end
       end
