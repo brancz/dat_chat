@@ -36,16 +36,16 @@ web-framework and
 [faye-websockets](https://github.com/faye/faye-websocket-ruby) for websocket
 handling.
 
-Since it is a distributed chat there will be several webservers and websockets
-would only be able to communicate with each other if the users landed on the
-same webserver by luck. To handle this problem [redis](http://redis.io/) is
-used with its [Pub/Sub](http://redis.io/topics/pubsub) features. And since
-redis is already present, it is also used as a storage mechanism for the
-messaging history. I realize that in real live production environments this
-would probably be done differently, since there is a chance that redis has not
-persistet the history completely in case of a crash. Redis can [easily be
-clustered](http://redis.io/topics/cluster-tutorial) starting with the 3.0
-release.
+Since it is a distributed chat there will be several webservers and websockets,
+which have to be able to communicate with each other, even if the users landed
+on different webservers by luck. To handle this problem
+[redis](http://redis.io/) is used with its
+[Pub/Sub](http://redis.io/topics/pubsub) features. And since redis is already
+present, it is also used as a storage mechanism for the messaging history. I
+realize that in real live production environments this would probably be done
+differently, since there is a chance that redis has not persistet the history
+completely in case of a crash. Redis has a pretty easy [high availability
+setup](http://redis.io/topics/cluster-tutorial) using redis-sentinel.
 
 Since we have now decoupled the websockets from the webserver, we can easily
 add more instances of the webserver. To load balance access to those webservers
@@ -54,9 +54,9 @@ like.
 
 ![current architecture](https://raw.githubusercontent.com/flower-pot/dat_chat/master/docs/current-architecture.png)
 
-> Info: when you look at my current HAProxy configuration you will notice that
-> it is very simple. It is just meant for locally trying out the application.
-> It is not suited for production use.
+When you look at my current HAProxy configuration you will notice that it is
+very simple. It is just meant for locally trying out the application. It is
+not suited for production use.
 
 To allow clustering of the HAProxy we would need something like an [Elastic IP
 Address](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html).
